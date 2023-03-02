@@ -7,6 +7,7 @@
 
 
 const TCHAR* const FImGuiModuleCommands::ToggleInput = TEXT("ImGui.ToggleInput");
+const TCHAR* const FImGuiModuleCommands::SetInput = TEXT("ImGui.SetInput");
 const TCHAR* const FImGuiModuleCommands::ToggleKeyboardNavigation = TEXT("ImGui.ToggleKeyboardNavigation");
 const TCHAR* const FImGuiModuleCommands::ToggleGamepadNavigation = TEXT("ImGui.ToggleGamepadNavigation");
 const TCHAR* const FImGuiModuleCommands::ToggleKeyboardInputSharing = TEXT("ImGui.ToggleKeyboardInputSharing");
@@ -20,6 +21,9 @@ FImGuiModuleCommands::FImGuiModuleCommands(FImGuiModuleProperties& InProperties)
 	, ToggleInputCommand(ToggleInput,
 		TEXT("Toggle ImGui input mode."),
 		FConsoleCommandDelegate::CreateRaw(this, &FImGuiModuleCommands::ToggleInputImpl))
+	, SetInputCommand(SetInput,
+		TEXT("Sets ImGui input mode."),
+		FConsoleCommandWithArgsDelegate::CreateRaw(this, &FImGuiModuleCommands::SetInputImpl))
 	, ToggleKeyboardNavigationCommand(ToggleKeyboardNavigation,
 		TEXT("Toggle ImGui keyboard navigation."),
 		FConsoleCommandDelegate::CreateRaw(this, &FImGuiModuleCommands::ToggleKeyboardNavigationImpl))
@@ -52,6 +56,16 @@ void FImGuiModuleCommands::SetKeyBinding(const TCHAR* CommandName, const FImGuiK
 void FImGuiModuleCommands::ToggleInputImpl()
 {
 	Properties.ToggleInput();
+}
+
+void FImGuiModuleCommands::SetInputImpl(const TArray<FString>& Args)
+{
+	bool bIsEnabled = false;
+	if (Args.Num() > 0)
+	{
+		LexFromString(bIsEnabled, *Args[0]);
+	}
+	Properties.SetInputEnabled(bIsEnabled);
 }
 
 void FImGuiModuleCommands::ToggleKeyboardNavigationImpl()
