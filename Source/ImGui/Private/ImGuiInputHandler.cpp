@@ -130,22 +130,13 @@ FReply UImGuiInputHandler::OnMouseButtonDown(const FPointerEvent& MouseEvent)
 	}
 
 	InputState->SetMouseDown(MouseEvent, true);
-	if (ModuleManager)
-	{
-		FImGuiContextProxy* Proxy = ModuleManager->GetContextManager().GetContextProxy(0);
-		if (Proxy)
-		{
-			// GEngine->AddOnScreenDebugMessage(15, 10, Proxy->WantsMouseCapture() ? FColor::Green : FColor::Red, TEXT("Handler Down"));
-			return ToReply(Proxy->WantsMouseCapture());
-		}
-	}
-	return ToReply(true);
+	return ToReply(WantsMouseCapture());
 }
 
 FReply UImGuiInputHandler::OnMouseButtonDoubleClick(const FPointerEvent& MouseEvent)
 {
 	InputState->SetMouseDown(MouseEvent, true);
-	return ToReply(true);
+	return ToReply(WantsMouseCapture());
 }
 
 FReply UImGuiInputHandler::OnMouseButtonUp(const FPointerEvent& MouseEvent)
@@ -156,13 +147,13 @@ FReply UImGuiInputHandler::OnMouseButtonUp(const FPointerEvent& MouseEvent)
 	}
 
 	InputState->SetMouseDown(MouseEvent, false);
-	return ToReply(true);
+	return ToReply(WantsMouseCapture());
 }
 
 FReply UImGuiInputHandler::OnMouseWheel(const FPointerEvent& MouseEvent)
 {
 	InputState->AddMouseWheelDelta(MouseEvent.GetWheelDelta());
-	return ToReply(true);
+	return ToReply(WantsMouseCapture());
 }
 
 FReply UImGuiInputHandler::OnMouseMove(const FVector2D& MousePosition, const FPointerEvent& MouseEvent)
@@ -178,7 +169,7 @@ FReply UImGuiInputHandler::OnMouseMove(const FVector2D& MousePosition, const FPo
 FReply UImGuiInputHandler::OnMouseMove(const FVector2D& MousePosition)
 {
 	InputState->SetMousePosition(MousePosition);
-	return ToReply(true);
+	return ToReply(WantsMouseCapture());
 }
 
 FReply UImGuiInputHandler::OnTouchStarted(const FVector2D& CursorPosition, const FPointerEvent& TouchEvent)
@@ -245,6 +236,18 @@ void UImGuiInputHandler::OnMouseInputDisabled()
 		InputState->ResetMouse();
 		UpdateInputStatePointer();
 	}
+}
+
+bool UImGuiInputHandler::WantsMouseCapture() const
+{
+	if (ModuleManager)
+	{
+		if (const FImGuiContextProxy* Proxy = ModuleManager->GetContextManager().GetContextProxy(ContextIndex))
+		{
+			return Proxy->WantsMouseCapture();
+		}
+	}
+	return false;
 }
 
 void UImGuiInputHandler::CopyModifierKeys(const FInputEvent& InputEvent)

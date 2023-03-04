@@ -467,31 +467,6 @@ void SImGuiWidget::UpdateInputState()
 			ReturnFocus();
 		}
 	}
-	else if(bInputEnabled)
-	{
-		const auto& ViewportWidget = GameViewport->GetGameViewportWidget();
-
-		if (bTransparentMouseInput)
-		{
-			// If mouse is in transparent input mode and focus is lost to viewport, let viewport keep it and disable
-			// the whole input to match that state.
-			if (GameViewport->GetGameViewportWidget()->HasMouseCapture())
-			{
-				// DON'T DISABLE OUR INPUT WHEN WE LOSE FOCUS
-				//Properties.SetInputEnabled(false);
-				//UpdateInputState();
-			}
-		}
-		else
-		{
-			// Widget tends to lose keyboard focus after console is opened. With non-transparent mouse we can fix that
-			// by manually restoring it.
-			if (!HasKeyboardFocus() && !IsConsoleOpened() && (ViewportWidget->HasKeyboardFocus() || ViewportWidget->HasFocusedDescendants()))
-			{
-				TakeFocus();
-			}
-		}
-	}
 }
 
 void SImGuiWidget::UpdateTransparentMouseInput(const FGeometry& AllottedGeometry)
