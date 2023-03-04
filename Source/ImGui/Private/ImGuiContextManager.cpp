@@ -259,9 +259,8 @@ void FImGuiContextManager::BuildFontAtlas(const TMap<FName, TSharedPtr<ImFontCon
 {
 	if (!FontAtlas.IsBuilt())
 	{
-		ImFontConfig FontConfig = {};
-		FontConfig.SizePixels = FMath::RoundFromZero(13.f * DPIScale);
-		FontAtlas.AddFontDefault(&FontConfig);
+		FString const FontPath = FPaths::RootDir() / TEXT("Engine/Content/Slate/Fonts/Roboto-Regular.ttf");
+		FontAtlas.AddFontFromFileTTF(TCHAR_TO_ANSI(*FontPath), 13.f * DPIScale);
 
 		// Build custom fonts
 		for (const TPair<FName, TSharedPtr<ImFontConfig>>& CustomFontPair : CustomFontConfigs)

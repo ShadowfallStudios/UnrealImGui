@@ -10,6 +10,10 @@
 #include <Styling/SlateTypes.h>
 #include <UObject/Object.h>
 
+#if WITH_EDITOR
+#include <Interfaces/IPluginManager.h>
+#endif
+
 // We use FSoftClassPath, which is supported by older and newer engine versions. Starting from 4.18, it is
 // a typedef of FSoftClassPath, which is also recognized by UHT.
 #if ENGINE_COMPATIBILITY_LEGACY_STRING_CLASS_REF
@@ -155,7 +159,7 @@ private:
 };
 
 // UObject used for loading and saving ImGui settings. To access actual settings use FImGuiModuleSettings interface.
-UCLASS(config=ImGui, defaultconfig)
+UCLASS(config=Game, defaultconfig)
 class UImGuiSettings : public UObject
 {
 	GENERATED_BODY()
@@ -296,6 +300,9 @@ private:
 
 #if WITH_EDITOR
 	void OnPropertyChanged(class UObject* ObjectBeingModified, struct FPropertyChangedEvent& PropertyChangedEvent);
+	void OnPluginLoadingPhaseComplete(ELoadingPhase::Type Phase, bool bSucccess);
+
+	FDelegateHandle PluginLoadingPhaseDelegateHandle;
 #endif // WITH_EDITOR
 
 	FImGuiModuleProperties& Properties;

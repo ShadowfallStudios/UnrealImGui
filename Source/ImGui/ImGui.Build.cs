@@ -35,6 +35,7 @@ public class ImGui : ModuleRules
 			new string[] {
 				Path.Combine(ModuleDirectory, "../ThirdParty/ImGuiLibrary/Include"),
 				Path.Combine(ModuleDirectory, "../ThirdParty/ImPlotLibrary/Public"),
+				Path.Combine(ModuleDirectory, "../ThirdParty/IconFontCppHeaders/Include"),
 				// ... add public include paths required here ...
 			}
 			);

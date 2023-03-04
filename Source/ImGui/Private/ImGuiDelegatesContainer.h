@@ -43,11 +43,11 @@ public:
 	// Get delegate to ImGui multi-context debug event.
 	FSimpleMulticastDelegate& OnMultiContextDebug() { return MultiContextDebugDelegate; }
 
+	void Clear();
+
 private:
 
 	int32 GetContextIndex(UWorld* World);
-
-	void Clear();
 
 	TMap<int32, FSimpleMulticastDelegate> WorldEarlyDebugDelegates;
 	TMap<int32, FSimpleMulticastDelegate> WorldDebugDelegates;

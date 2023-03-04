@@ -82,6 +82,11 @@ public:
 	 * @param Handle - Delegate handle that was returned by adding function
 	 */
 	virtual void RemoveImGuiDelegate(const FImGuiDelegateHandle& Handle);
+	
+	/**
+	 * Removes all delegate added with any version of Add...ImGuiDelegate
+	 */
+	virtual void ClearImGuiDelegates();
 
 #endif // #if IMGUI_WITH_OBSOLETE_DELEGATES
 

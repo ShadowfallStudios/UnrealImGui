@@ -8,6 +8,9 @@
 #include "Utilities/WorldContext.h"
 #include "Utilities/WorldContextIndex.h"
 
+#include "FontAwesomeFont.h"
+#include "IconsFontAwesome6.h"
+
 #if WITH_EDITOR
 #include "ImGuiImplementation.h"
 #include "Editor/ImGuiEditor.h"
@@ -76,6 +79,11 @@ void FImGuiModule::RemoveImGuiDelegate(const FImGuiDelegateHandle& Handle)
 	}
 }
 
+void FImGuiModule::ClearImGuiDelegates()
+{
+	FImGuiDelegatesContainer::Get().Clear();
+}
+
 #endif // IMGUI_WITH_OBSOLETE_DELEGATES
 
 FImGuiTextureHandle FImGuiModule::FindTextureHandle(const FName& Name)
@@ -135,6 +143,25 @@ void FImGuiModule::StartupModule()
 	checkf(!ImGuiEditor, TEXT("Instance of the ImGui Editor already exists. Instance should be created only during module startup."));
 	ImGuiEditor = new FImGuiEditor();
 #endif
+
+	// Add FontAwesome font glyphs from memory
+	if(TSharedPtr<ImFontConfig> FAFontConfig = MakeShareable(new ImFontConfig()))
+	{
+		static const ImWchar IconRange[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+    
+		FAFontConfig->FontDataOwnedByAtlas = false; // Global font data lifetime
+		FAFontConfig->FontData             = (void*)FontAwesomeFont_data; // Declared in binary C .h file
+		FAFontConfig->FontDataSize         = FontAwesomeFont_size; // Declared in binary C .h file
+		FAFontConfig->SizePixels           = 13.f * 2.0f / 3.0f;
+		FAFontConfig->MergeMode            = true; // Forces ImGui to place this font into the same atlas as the previous font
+		FAFontConfig->GlyphRanges          = IconRange; // Required; instructs ImGui to use these glyphs
+		FAFontConfig->GlyphMinAdvanceX     = 13.f * 2.0f / 3.0f; // Use for monospaced icons
+		FAFontConfig->PixelSnapH           = true; // Better rendering (align to pixel grid)
+		FAFontConfig->GlyphOffset          = {0.f, -1.f}; // Moves icons around, for alignment with general typesets
+
+		GetProperties().AddCustomFont("FontAwesome", FAFontConfig);
+		RebuildFontAtlas();
+	}
 }
 
 void FImGuiModule::ShutdownModule()
